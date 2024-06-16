@@ -21,33 +21,58 @@ const intial = {
   payload: "",
   charging: "",
   frame: "",
-
 };
 
 const Product = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("768px"));
   const [product, setProduct] = useState(intial);
+  const [errors, setErrors] = useState({});
   console.log(product);
 
-  const handleChange = (e)=>{
-        
-    const {name,value} = e.target;
-    setProduct((prev)=>({
-        ...prev,
-        [name]:value
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProduct((prev) => ({
+      ...prev,
+      [name]: value,
     }));
-  }
+  };
 
-  const submit = async ()=>{
+  const validateForm = () => {
+    let newError = {};
+
+    let fields = [
+      "image",
+      "motor",
+      "battery",
+      "range",
+      "tyresize",
+      "brakes",
+      "ground",
+      "payload",
+      "charging",
+      "frame",
+    ];
+
+    fields.forEach((each)=>{
+      if(!product[each]){
+        newError[each] = `please fill the ${each}`
+      }
+    });
+
+    setErrors(newError);
+    return Object.keys(newError).length === 0;
+  };
+
+  const submit = async () => {
+    if(!validateForm()) return;
     try {
-        const response = await client.post("/admin/productadd",product);
-        console.log(response);
-        
+      const response = await client.post("/admin/productadd", product);
+      console.log(response);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-  }
+  };
   return (
     <>
       <Box
@@ -76,6 +101,8 @@ const Product = () => {
               variant="outlined"
               size="small"
               value={product.image}
+              helperText={errors.image}
+              error={!!errors.image}
               onChange={handleChange}
               name="image"
             />
@@ -85,8 +112,10 @@ const Product = () => {
               variant="outlined"
               size="small"
               value={product.motor}
+              error={!!errors.motor}
               onChange={handleChange}
               name="motor"
+              helperText={errors.motor}
             />
           </Stack>
           <Stack direction={isMobile ? "column" : "row"} spacing={2}>
@@ -98,6 +127,8 @@ const Product = () => {
               value={product.battery}
               onChange={handleChange}
               name="battery"
+              helperText={errors.battery}
+              error={!!errors.battery}
             />
             <TextField
               fullWidth
@@ -107,6 +138,8 @@ const Product = () => {
               value={product.range}
               onChange={handleChange}
               name="range"
+              helperText={errors.range}
+              error={!!errors.range}
             />
           </Stack>
           <Stack direction={isMobile ? "column" : "row"} spacing={2}>
@@ -118,6 +151,8 @@ const Product = () => {
               value={product.tyresize}
               onChange={handleChange}
               name="tyresize"
+              helperText={errors.tyresize}
+              error={!!errors.tyresize}
             />
             <TextField
               fullWidth
@@ -127,7 +162,10 @@ const Product = () => {
               value={product.brakes}
               onChange={handleChange}
               name="brakes"
+              helperText={errors.brakes}
+              error={!!errors.brakes}
             />
+
           </Stack>
           <Stack direction={isMobile ? "column" : "row"} spacing={2}>
             <TextField
@@ -138,6 +176,8 @@ const Product = () => {
               value={product.ground}
               onChange={handleChange}
               name="ground"
+              helperText={errors.ground}
+              error={!!errors.ground}
             />
             <TextField
               fullWidth
@@ -147,6 +187,8 @@ const Product = () => {
               value={product.payload}
               onChange={handleChange}
               name="payload"
+              helperText={errors.payload}
+              error={!!errors.payload}
             />
           </Stack>
           <Stack direction={isMobile ? "column" : "row"} spacing={2}>
@@ -158,6 +200,8 @@ const Product = () => {
               value={product.charging}
               onChange={handleChange}
               name="charging"
+              helperText={errors.charging}
+              error={!!errors.charging}
             />
             <TextField
               fullWidth
@@ -167,13 +211,17 @@ const Product = () => {
               value={product.frame}
               onChange={handleChange}
               name="frame"
+              helperText={errors.frame}
+              error={!!errors.frame}
             />
           </Stack>
           <Stack direction={"row"} spacing={2} justifyContent={"center"}>
             <Button variant="contained" color="warning">
               Cancel
             </Button>
-            <Button variant="contained" onClick={submit}>Submit</Button>
+            <Button variant="contained" onClick={submit}>
+              Submit
+            </Button>
           </Stack>
         </Stack>
       </Box>

@@ -1,4 +1,4 @@
-import React, { useState, } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import {
@@ -12,40 +12,67 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PasswordIcon from "@mui/icons-material/Password";
 import "./login.css";
 import { client } from "../../Client/Clientaxios";
+import { styled } from "@mui/material/styles";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import { toast } from "react-hot-toast";
 
-
-const LoginForm = ({setAdmin,admin}) => {
+const CustomTextField = styled(TextField)({
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "white", // Default border color
+    },
+    "&:hover fieldset": {
+      borderColor: "white", // Border color on hover
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "white", // Border color when focused
+    },
+  },
+  "& .MuiInputLabel-root": {
+    color: "white", // Label color
+  },
+  "& .MuiInputBase-input": {
+    color: "white", // Text color
+  },
+});
+const LoginForm = ({ setAdmin, admin }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [checked, setChecked] = useState(false);
 
   const submit = async () => {
     const credential = { username, password };
 
     console.log(credential);
     try {
-      const response = await client.post("/admin/signin", credential,{ withCredentials: true });
+      const response = await client.post("/admin/signin", credential, {
+        withCredentials: true,
+      });
 
       if (response.status === 200) {
-        alert("logged in successfully");
+        toast.success("Login Successfull");
         getProtected();
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.error);
+      toast.error(error.response.data.error)
     }
   };
 
   const getProtected = async () => {
     try {
-      const response = await client.get("/admin/authuser",{ withCredentials: true });
+      const response = await client.get("/admin/authuser", {
+        withCredentials: true,
+      });
       console.log(response.data.user);
       const adminDetails = response.data.user;
-      if(adminDetails){
+      if (adminDetails) {
         setAdmin(adminDetails);
-        console.log('admin:' + admin);
-        navigate('/admin');
+        console.log("admin:" + admin);
+        navigate("/admin");
       }
-      
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +84,7 @@ const LoginForm = ({setAdmin,admin}) => {
         <Box
           sx={{
             width: "300px",
-            height: "300px",
+            minHeight: "300px",
             padding: "20px",
             background: "rgba(0,0,0,0.3)",
             backdropFilter: "blur(3px)",
@@ -66,8 +93,12 @@ const LoginForm = ({setAdmin,admin}) => {
           }}
         >
           <Stack direction={"column"} spacing={4}>
-            <Typography sx={{ textAlign: "center" }}>Admin Login</Typography>
-            <TextField
+            <Typography
+              sx={{ textAlign: "center", color: "white", fontSize: "20px" }}
+            >
+              Admin Login
+            </Typography>
+            <CustomTextField
               label="Username"
               name="username"
               value={username}
@@ -77,31 +108,51 @@ const LoginForm = ({setAdmin,admin}) => {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <AccountCircleIcon />
+                    <AccountCircleIcon sx={{ color: "white" }} />
                   </InputAdornment>
                 ),
               }}
             />
-            <TextField
+            <CustomTextField
               label="password"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               variant="outlined"
-              type="password"
+              type={checked ? 'text' : 'password'}
               size="small"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <PasswordIcon />
+                    <PasswordIcon sx={{ color: "white" }} />
                   </InputAdornment>
                 ),
               }}
+            />
+          </Stack>
+          <Stack direction={"column"} sx={{marginTop:'3px'}} spacing={2}>
+          <FormControlLabel
+              control={
+                <Checkbox
+                 checked={checked}
+                 onChange={(e)=>setChecked(e.target.checked)}
+                 size="small"
+                  sx={{
+                    color: "white",
+                    "&.Mui-checked": {
+                      color: 'white',
+                    },
+                  }}
+                />
+              }
+              label="Show Password"
+              sx={{ color: "white",marginTop:'20px' }}
             />
             <Button size="small" variant="contained" onClick={submit}>
               LogIn
             </Button>
           </Stack>
+   
         </Box>
       </div>
     </>

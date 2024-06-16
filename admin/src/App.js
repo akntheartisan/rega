@@ -2,6 +2,7 @@ import { useState, createContext } from "react";
 import LoginForm from "./components/Adminlogin/LoginForm";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AdminDash from "./components/Admindash/AdminDash";
+import { Toaster } from "react-hot-toast";
 
 export const AdminContext = createContext();
 function App() {
@@ -10,7 +11,9 @@ function App() {
 
   return (
     <>
+    
       <AdminContext.Provider value={{ admin, setAdmin }}>
+      <Toaster />
         <Routes>
           <Route
             path="/admin/*"
