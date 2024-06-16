@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import {
   TextField,
@@ -10,10 +11,11 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PasswordIcon from "@mui/icons-material/Password";
 import "./login.css";
-import axios from "axios";
 import { client } from "../../Client/Clientaxios";
 
-const LoginForm = () => {
+
+const LoginForm = ({setAdmin,admin}) => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,8 +24,28 @@ const LoginForm = () => {
 
     console.log(credential);
     try {
-      const response = await client.post("/regaadmin/signin", credential);
-      console.log(response);
+      const response = await client.post("/admin/signin", credential,{ withCredentials: true });
+
+      if (response.status === 200) {
+        alert("logged in successfully");
+        getProtected();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getProtected = async () => {
+    try {
+      const response = await client.get("/admin/authuser",{ withCredentials: true });
+      console.log(response.data.user);
+      const adminDetails = response.data.user;
+      if(adminDetails){
+        setAdmin(adminDetails);
+        console.log('admin:' + admin);
+        navigate('/admin');
+      }
+      
     } catch (error) {
       console.log(error);
     }

@@ -4,51 +4,98 @@ const jwt = require('jsonwebtoken');
 
 exports.adminsignin = async (req, res, next) => {
   console.log(req.body);
-  // try {
-  //   const { username, password } = req.body;
-  //   console.log(username, password);
+  try {
+    const { username, password } = req.body;
+    console.log(username, password);
 
-  //   if (!username || !password) {
-  //     return res.status(400).json({ 
-  //       status: "fail",
-  //       message: "Username and Password are required",
-  //     });
-  //   }
+    if (!username || !password) {
+      return res.status(400).json({ 
+        status: "fail",
+        message: "Username and Password are required",
+      });
+    }
 
-  //   const adminCheck = await adminmodel.findOne({ username }).select("+password");
-  //   console.log(adminCheck);
+    const adminCheck = await adminmodel.findOne({ username }).select("+password");
+    console.log(adminCheck);
 
-  //   if (
-  //     !adminCheck ||
-  //     !(await adminCheck.correctPassword(password, adminCheck.password))
-  //   ) {
-  //     return res.status(401).json({
-  //       status: "fail",
-  //       message: "Wrong Password, Please check the password",
-  //     });
-  //   }
+    // if (
+    //   !adminCheck ||
+    //   !(await adminCheck.correctPassword(password, adminCheck.password))
+    // ) {
+    //   return res.status(401).json({
+    //     status: "fail",
+    //     message: "Wrong Password, Please check the password",
+    //   });
+    // }
 
-  //   const token = jwt.sign({ id: adminCheck._id }, process.env.JWT_SECRET, {
-  //     expiresIn: process.env.JWT_EXPIRATION,
-  //   });
+    const jwtSecret = 'sdflkjsadlfhasldfjsdlk';
+    const jwtExpiration = '90d';
 
-  //   const cookieOptions = {
-  //     expires: new Date(Date.now() + 90 * 24 * 3600 * 1000), // 90 days
-  //     httpOnly: true,
-  //   };
+    const token = jwt.sign({ id: adminCheck._id }, jwtSecret, {
+      expiresIn: jwtExpiration,
+    });
 
-  //   res.cookie("jwt", token, cookieOptions)
-  //     .status(200)
-  //     .json({
-  //       status: "success",
-  //       message: 'Successfully logged in'
-  //     });
+    console.log(token);
 
-  // } catch (err) {
-  //   console.error(err);
-  //   res.status(500).json({
-  //     status: "error",
-  //     message: "An error occurred. Please try again later."
-  //   });
-  // }
+    const cookieOptions = {
+      expires: new Date(Date.now() + 90 * 24 * 3600 * 1000),
+      httpOnly: true,
+    };
+
+    res.cookie("jwt", token, cookieOptions)
+      .status(200)
+      .json({
+        status: "success",
+        message: 'Successfully logged in'
+      });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      message: "An error occurred. Please try again later."
+    });
+  }
+};
+
+exports.protect = async (req, res, next) => {
+  console.log("thisismwtriggered");
+   
+  // 1) Get the token from the cookies
+  let token;
+  if (req.cookies && req.cookies.jwt) {
+    token = req.cookies.jwt;
+    console.log("protecttoken:" + token);
+  } else {
+    return res.status(401).json({
+      status: "fail",
+      message: "Not authenticated",
+    });
+  }
+
+  // 2) Verify token
+  const jwtSecret = 'sdflkjsadlfhasldfjsdlk';
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+    console.log(decoded.id);
+
+  // 3) Check if user still exists
+    const adminCheck = await adminmodel.findById(decoded.id);
+    if (!adminCheck) {
+      return res.status(401).json({
+        status: "fail",
+        message: "This user no longer exists",
+      });
+    }
+
+    console.log(adminCheck);
+
+    req.user = adminCheck;
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      status: "fail",
+      message: "Token expired or invalid. Please log in again",
+    });
+  }
 };

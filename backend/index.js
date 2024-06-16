@@ -3,13 +3,20 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 const adminroute = require('./route/AdminRoute');
+const cookieParser = require('cookie-parser');
 
-app.use(cors());
+
 app.use(express.json());
+app.use(cookieParser())
+app.use(cors({
+  origin: "http://localhost:3000", 
+  credentials: true 
+}));
+
 
 //routes
 
-app.use("/regaadmin",adminroute);
+app.use("/admin",adminroute);
 
 const mongo_uri =
   "mongodb+srv://aravinthkumaran410:iRPBg1ArJBqv3ayN@cluster0.2eiliwy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";

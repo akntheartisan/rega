@@ -1,7 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const cont = require('../controller/AdminLoginController')
+const cont = require('../controller/AdminLoginController');
+const prodcont = require('../controller/ProductAddController');
 
 router.post('/signin',cont.adminsignin);
+router.get('/authuser',cont.protect,(req,res)=>{
+    res.status(200).json({
+        status:'success',
+        user:req.user
+    });
+});
+router.post('/productadd',prodcont.productadd)
 
 module.exports = router;

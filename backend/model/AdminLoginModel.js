@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const AdminLogin = new mongoose.Schema({
     username: {
@@ -9,7 +10,7 @@ const AdminLogin = new mongoose.Schema({
     }
 });
 
-AdminLogin.method.correctPassword = async function(dbpassword,enterpassword){
+AdminLogin.methods.correctPassword = async function(dbpassword,enterpassword){
     return await bcrypt.compare(dbpassword,enterpassword);
 };
 

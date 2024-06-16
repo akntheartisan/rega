@@ -1,12 +1,30 @@
+import { useState, createContext } from "react";
 import LoginForm from "./components/Adminlogin/LoginForm";
+import { Routes, Route, Navigate } from "react-router-dom";
+import AdminDash from "./components/Admindash/AdminDash";
 
-
-
+export const AdminContext = createContext();
 function App() {
+  const [admin, setAdmin] = useState("");
+  console.log(admin);
+
   return (
- <>
-   <LoginForm/>
- </>
+    <>
+      <AdminContext.Provider value={{ admin, setAdmin }}>
+        <Routes>
+          <Route
+            path="/admin/*"
+            element={
+              admin ? (
+                <AdminDash />
+              ) : (
+                <LoginForm setAdmin={setAdmin} admin={admin} />
+              )
+            }
+          />
+        </Routes>
+      </AdminContext.Provider>
+    </>
   );
 }
 
