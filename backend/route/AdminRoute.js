@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const cont = require('../controller/AdminLoginController');
-const prodcont = require('../controller/ProductAddController');
+
 
 router.post('/signin',cont.adminsignin);
 router.get('/authuser',cont.protect,(req,res)=>{
@@ -10,6 +10,6 @@ router.get('/authuser',cont.protect,(req,res)=>{
         user:req.user
     });
 });
-router.post('/productadd',prodcont.productadd)
+
 
 module.exports = router;

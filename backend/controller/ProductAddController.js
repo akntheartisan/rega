@@ -1,8 +1,68 @@
 const projectmodel = require("../model/ProductsModel");
+const Cloudinary = require("../Cloud/Cloudinary");
+const streamifier = require("streamifier");
+const sharp = require("sharp");
+const multer = require("multer");
+
+const storage = multer.memoryStorage();
+
+const upload = multer({ storage: storage });
+
+exports.uploadFile = upload.single("image");
+
+exports.resizeImage = async (req, res, next) => {
+  console.log("resizeimage controller");
+  try {
+    console.log("Original File Size:", req.file.size);
+    req.fileBuffer = await sharp(req.file.buffer)
+      .resize(250, 150, {
+        fit: sharp.fit.inside,
+        withoutEnlargement: true,
+      })
+      .toFormat("png")
+      .toBuffer();
+    console.log("Resized File Buffer Size:", req.fileBuffer.length);
+    next();
+  } catch (err) {
+    console.log("Error resizing image:", err);
+    res.status(500).json({ message: "Error resizing image" });
+  }
+};
+
+exports.saveImage = async (req, res, next) => {
+  console.log("saveimage controller");
+  try {
+    const fileName = `${req.body.name}_${Date.now()}.png`;
+    const Stream = Cloudinary.uploader.upload_stream(
+      {
+        folder: "scooter_image",
+        public_id: fileName,
+        resource_type: "auto",
+        format: "png",
+      },
+      (err, result) => {
+        if (err) {
+          console.log("Error uploading to Cloudinary:", err);
+          return res.status(404).json({ message: "Cannot save image" });
+        } else {
+          console.log("Upload result:", result);
+          req.result = result;
+          next();
+        }
+      }
+    );
+    streamifier.createReadStream(req.fileBuffer).pipe(Stream);
+  } catch (err) {
+    console.log("Error in saveImage:", err);
+    res.status(500).json({ message: "Error saving image" });
+  }
+};
 
 exports.productadd = async (req, res, next) => {
   try {
-    let newProduct = await projectmodel.create(req.body);
+    const { url, public_id } = req.result;
+    const newProductData = { ...req.body, image: { url: url, pid: public_id } };
+    let newProduct = await projectmodel.create(newProductData);
     if (newProduct) {
       res.status(200).json({
         status: "success",
@@ -15,5 +75,20 @@ exports.productadd = async (req, res, next) => {
       status: "fail",
       error: "Something Wrong",
     });
+  }
+};
+
+exports.getProduct = async (req, res, next) => {
+  try {
+    let data = await projectmodel.find();
+    console.log(data);
+    if(data){
+      return res.status(200).json({
+        status:'success',
+        data:data
+      })
+    }
+  } catch (error) {
+    console.log(error);
   }
 };

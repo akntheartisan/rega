@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 const adminroute = require('./route/AdminRoute');
+const productroute = require('./route/ProductRoute');
 const cookieParser = require('cookie-parser');
 
 
@@ -17,6 +18,7 @@ app.use(cors({
 //routes
 
 app.use("/admin",adminroute);
+app.use("/project",productroute);
 
 const mongo_uri =
   "mongodb+srv://aravinthkumaran410:iRPBg1ArJBqv3ayN@cluster0.2eiliwy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";

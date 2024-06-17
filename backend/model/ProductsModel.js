@@ -1,37 +1,47 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const Product = new mongoose.Schema({
-    image:{
+const Product = new mongoose.Schema(
+  {
+    image: {
+      url: {
+        type: String,
+      },
+      pid: {
+        type: String,
+      },
+    },
+    model:{
         type:String
     },
-    motor:{
-        type:String
+    motor: {
+      type: String,
     },
-    battery:{
-        type:String
+    battery: {
+      type: String,
     },
-    range:{
-        type:String
+    range: {
+      type: String,
     },
-    tyresizeandtype:{
-        type:String
+    tyresizeandtype: {
+      type: String,
     },
-    brakes:{
-        type:String
+    brakes: {
+      type: String,
     },
-    groundclearance:{
-        type:String
+    groundclearance: {
+      type: String,
     },
-    payload:{
-        type:String
+    payload: {
+      type: String,
     },
-    chargingtime:{
-        type:String
+    chargingtime: {
+      type: String,
     },
-    frame:{
-        type:String
-    }
+    frame: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
 
-},{timestamps:true});
-
-module.exports = mongoose.model('product',Product);
+module.exports = mongoose.model("product", Product);

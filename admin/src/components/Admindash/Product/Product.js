@@ -9,9 +9,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import ProductTable from "./ProductTable";
+import { toast } from "react-hot-toast";
 
-const intial = {
-  image: "",
+const initial = {
+  model: "",
   motor: "",
   battery: "",
   range: "",
@@ -26,9 +28,17 @@ const intial = {
 const Product = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("768px"));
-  const [product, setProduct] = useState(intial);
+  const [product, setProduct] = useState(initial);
   const [errors, setErrors] = useState({});
-  console.log(product);
+  const [image, setImage] = useState(null);
+ 
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,10 +49,10 @@ const Product = () => {
   };
 
   const validateForm = () => {
-    let newError = {};
+    let newErrors = {};
 
-    let fields = [
-      "image",
+    const fields = [
+      "model",
       "motor",
       "battery",
       "range",
@@ -54,25 +64,39 @@ const Product = () => {
       "frame",
     ];
 
-    fields.forEach((each)=>{
-      if(!product[each]){
-        newError[each] = `please fill the ${each}`
+    fields.forEach((field) => {
+      if (!product[field]) {
+        newErrors[field] = `Please fill the ${field}`;
       }
     });
 
-    setErrors(newError);
-    return Object.keys(newError).length === 0;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const submit = async () => {
-    if(!validateForm()) return;
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const formData = new FormData();
+    formData.append("image", image);
+    Object.keys(product).forEach((key) => {
+      formData.append(key, product[key]);
+    });
+
     try {
-      const response = await client.post("/admin/productadd", product);
-      console.log(response);
+      const response = await client.post("/project/productadd", formData);
+      if (response.status === 200) {
+        toast.success("New Product Added Successfully");
+        setProduct(initial);
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
+
+
   return (
     <>
       <Box
@@ -86,6 +110,7 @@ const Product = () => {
           borderRadius: 2,
           backgroundColor: "white",
         }}
+        onSubmit={submit}
       >
         <Typography
           variant="h5"
@@ -97,14 +122,29 @@ const Product = () => {
           <Stack direction={isMobile ? "column" : "row"} spacing={2}>
             <TextField
               fullWidth
-              label="Product Image"
               variant="outlined"
               size="small"
-              value={product.image}
-              helperText={errors.image}
-              error={!!errors.image}
-              onChange={handleChange}
+              onChange={handleFileChange}
               name="image"
+              type="file"
+              accept="image/*"
+            />
+            {/* {image && (
+              <Typography variant="body2" sx={{ marginLeft: 1 }}>
+                {image.name}
+              </Typography>
+            )} */}
+
+            <TextField
+              fullWidth
+              label="Model"
+              variant="outlined"
+              size="small"
+              value={product.model}
+              error={!!errors.model}
+              onChange={handleChange}
+              name="model"
+              helperText={errors.model}
             />
             <TextField
               fullWidth
@@ -165,7 +205,6 @@ const Product = () => {
               helperText={errors.brakes}
               error={!!errors.brakes}
             />
-
           </Stack>
           <Stack direction={isMobile ? "column" : "row"} spacing={2}>
             <TextField
@@ -219,11 +258,14 @@ const Product = () => {
             <Button variant="contained" color="warning">
               Cancel
             </Button>
-            <Button variant="contained" onClick={submit}>
+            <Button variant="contained" type="submit">
               Submit
             </Button>
           </Stack>
         </Stack>
+      </Box>
+      <Box sx={{ marginTop: "35px", marginBottom: "35px", padding: "15px" }}>
+        <ProductTable/>
       </Box>
     </>
   );
