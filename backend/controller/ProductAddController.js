@@ -32,7 +32,7 @@ exports.resizeImage = async (req, res, next) => {
 exports.saveImage = async (req, res, next) => {
   console.log("saveimage controller");
   try {
-    const fileName = `${req.body.name}_${Date.now()}.png`;
+    const fileName = `scooter_${Date.now()}.png`;
     const Stream = Cloudinary.uploader.upload_stream(
       {
         folder: "scooter_image",

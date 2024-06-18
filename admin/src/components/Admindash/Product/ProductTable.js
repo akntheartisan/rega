@@ -8,9 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { client } from "../../../Client/Clientaxios";
-
-
-
+import {Link} from 'react-router-dom'
 
 
 export default function ProductTable() {
@@ -111,19 +109,19 @@ export default function ProductTable() {
                 key={each._id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" align="center">
                   {each.model}
                 </TableCell>
-                <TableCell align="right">{each.motor}</TableCell>
-                <TableCell align="right">{each.image}</TableCell>
-                <TableCell align="right">{each.range}</TableCell>
-                <TableCell align="right">{each.range}</TableCell>
+                <TableCell align="center">{each.motor}</TableCell>
+                <TableCell align="center"><Link to={each.image.url} target="_blank">{each.image.pid}</Link></TableCell>
+                <TableCell align="center">{each.range}</TableCell>
+                <TableCell align="center">{each.range}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
+      {/* <TablePagination
         rowsPerPageOptions={[5, 10, 25, 100]}
         component="div"
         count={productData.length}
@@ -131,7 +129,7 @@ export default function ProductTable() {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      /> */}
     </Paper>
   );
 }
