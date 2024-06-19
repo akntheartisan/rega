@@ -22,13 +22,13 @@ const Product = new mongoose.Schema(
     range: {
       type: String,
     },
-    tyresizeandtype: {
+    tyresize: {
       type: String,
     },
     brakes: {
       type: String,
     },
-    groundclearance: {
+    ground: {
       type: String,
     },
     payload: {

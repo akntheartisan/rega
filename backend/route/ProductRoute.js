@@ -11,5 +11,7 @@ router.post(
 );
 
 router.get("/getproduct",prodcont.getProduct);
+router.post("/updateproject",prodcont.updateProject);
+router.post("/deleteproduct",prodcont.deleteProduct);
 
 module.exports = router;

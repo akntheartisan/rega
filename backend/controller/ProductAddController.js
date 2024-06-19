@@ -82,11 +82,52 @@ exports.getProduct = async (req, res, next) => {
   try {
     let data = await projectmodel.find();
     console.log(data);
-    if(data){
+    if (data) {
       return res.status(200).json({
-        status:'success',
-        data:data
-      })
+        status: "success",
+        data: data,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.updateProject = async (req, res) => {
+  console.log("this update get triggered");
+  const id = req.body._id;
+
+  try {
+    let updateProduct = await projectmodel.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    console.log(updateProduct);
+    if (updateProduct) {
+      return res.status(200).json({
+        status: "success",
+        message: "Updated successfully",
+        data: updateProduct,
+      });
+    } else {
+      return res.status(404).json({
+        status: "fail",
+        message: "Product not found",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  console.log(req.body.id);
+  try {
+    let deleteProduct = await projectmodel.findByIdAndDelete(req.body.id);
+    if (deleteProduct) {
+      return res.status(200).json({
+        status: "success",
+        message: "Deleted successfully",
+      });
     }
   } catch (error) {
     console.log(error);

@@ -129,12 +129,6 @@ const Product = () => {
               type="file"
               accept="image/*"
             />
-            {/* {image && (
-              <Typography variant="body2" sx={{ marginLeft: 1 }}>
-                {image.name}
-              </Typography>
-            )} */}
-
             <TextField
               fullWidth
               label="Model"
@@ -265,7 +259,7 @@ const Product = () => {
         </Stack>
       </Box>
       <Box sx={{ marginTop: "35px", marginBottom: "35px", padding: "15px" }}>
-        <ProductTable/>
+        <ProductTable product={product} setProduct={setProduct}/>
       </Box>
     </>
   );

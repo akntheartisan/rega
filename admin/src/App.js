@@ -11,9 +11,23 @@ function App() {
 
   return (
     <>
-    
       <AdminContext.Provider value={{ admin, setAdmin }}>
-      <Toaster />
+        <Toaster
+          toastOptions={{
+            success: {
+              style: {
+                background: "green",
+                color:'white'
+              },
+            },
+            error: {
+              style: {
+                background: "red",
+                color:'white'
+              },
+            },
+          }}
+        />
         <Routes>
           <Route
             path="/admin/*"
