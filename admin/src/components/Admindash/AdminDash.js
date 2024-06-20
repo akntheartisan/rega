@@ -6,7 +6,7 @@ import Header from "./Header/Header";
 const AdminDash = () => {
   return (
     <>
-      <Header />
+      
       <div className="row">
         <div
           className="col-md-2"

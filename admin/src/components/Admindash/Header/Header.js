@@ -2,6 +2,7 @@ import React from "react";
 import "./header.css";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { IconButton } from "@mui/material";
+import Profile from "./Profile";
 
 const Header = () => {
   return (
@@ -9,9 +10,7 @@ const Header = () => {
       <div className="wrapper">
         <div className="logo">logo</div>
         <div className="usericon">
-            <IconButton>
-              <AccountCircleIcon/>
-            </IconButton>
+           <Profile/>
         </div>
       </div>
     </div>

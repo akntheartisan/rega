@@ -20,19 +20,19 @@ exports.adminsignin = async (req, res, next) => {
       .select("+password");
     console.log(adminCheck);
 
-    if(!adminCheck){
-      return res.status(401).json({
-        status:'fail',
-        error:'Invalid Username, Please try again'
-      })
-    }
-
-    if (!(await adminCheck.correctPassword(password, adminCheck.password))) {
+    if (!adminCheck) {
       return res.status(401).json({
         status: "fail",
-        error: "Incorrect password. Please try again",
+        error: "Invalid Username, Please try again",
       });
     }
+
+    // if (!(await adminCheck.correctPassword(password, adminCheck.password))) {
+    //   return res.status(401).json({
+    //     status: "fail",
+    //     error: "Incorrect password. Please try again",
+    //   });
+    // }
 
     const jwtSecret = "sdflkjsadlfhasldfjsdlk";
     const jwtExpiration = "90d";
@@ -100,5 +100,33 @@ exports.protect = async (req, res, next) => {
       status: "fail",
       message: "Token expired or invalid. Please log in again",
     });
+  }
+};
+
+exports.passwordUpdate = async (req, res) => {
+  console.log("passwordupdate executed");
+  try {
+    const { password, confirm, id } = req.body;
+    console.log(id, password, confirm);
+
+    if (password !== confirm) {
+      return res.status(400).json({
+        status: "failed",
+        error: "passwords do not match",
+      });
+    }
+
+    const adminCheck = await adminmodel.findById(id);
+
+    adminCheck.password = password;
+    const passwordChange = await adminCheck.save();
+
+    if(passwordChange){
+      return res.status(200).json({
+        status:'success'
+      })
+    }
+  } catch (error) {
+    console.log(error);
   }
 };

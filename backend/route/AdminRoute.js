@@ -11,5 +11,7 @@ router.get('/authuser',cont.protect,(req,res)=>{
     });
 });
 
+router.post('/passwordupdate',cont.passwordUpdate);
+
 
 module.exports = router;
